@@ -1,10 +1,20 @@
-import { db } from "@/db/index";
-import { usersTable } from "@/db/schema";
 import { redirect } from 'next/navigation';
-
+import { createClient } from '@/utils/supabase/server'
 
 async function getUsers() {
-    const users = await db.select().from(usersTable)
+    // Initialize Supabase client
+    const supabase = createClient()
+
+    // Fetch users from Supabase
+    const { data: users, error } = await supabase
+        .from('public.users')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching users:', error)
+        return []
+    }
+
     return users
 }
 
@@ -39,7 +49,14 @@ export default async function AboutPage() {
         const age = parseInt(formData.get('age') as string, 10)
         const email = formData.get('email') as string
         try {
-            const user = await db.insert(usersTable).values({ name, age, email })
+            const supabase = createClient()
+
+            const { data: user, error } = await supabase
+                .from('public.users')
+                .insert({ name, age, email })
+                .select()
+                .single()
+            if (error) throw error
             console.log('created', user)
             redirect('/about')
         } catch (error) {
