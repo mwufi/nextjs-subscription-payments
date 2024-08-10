@@ -7,7 +7,7 @@ async function getUsers() {
 
     // Fetch users from Supabase
     const { data: users, error } = await supabase
-        .from('public.users')
+        .from('users_table')
         .select('*')
 
     if (error) {
@@ -52,7 +52,7 @@ export default async function AboutPage() {
             const supabase = createClient()
 
             const { data: user, error } = await supabase
-                .from('public.users')
+                .from('users_table')
                 .insert({ name, age, email })
                 .select()
                 .single()

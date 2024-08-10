@@ -47,7 +47,33 @@ const insertTodo = async () => {
     }
 }
 
+const createUser = async () => {
+    const { data, error } = await supabase.schema('public')
+
+    if (error) {
+        console.log(error)
+    }
+    if (data) {
+        console.log(data)
+    }
+}
+
+const testArrays = async () => {
+    const { data: insertData, error: insertError } = await supabase
+        .from('arraytest')
+        .insert({ array: ['haarry', 'sally'] });
+
+    if (insertError) {
+        console.error('Error inserting array:', insertError);
+    } else {
+        console.log('Array inserted successfully:', insertData);
+    }
+
+    const { data, error } = await supabase.from('arraytest').select('*')
+    console.log("here you go", data)
+}
+
 async function main() {
-    fetchTodos()
+    await testArrays()
 }
 main()
